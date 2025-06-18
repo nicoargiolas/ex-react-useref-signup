@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import './App.css'
 
 // 🎯 Bonus: Migliorare l'Usabilità
@@ -32,9 +32,9 @@ function App() {
       specRef.current.value.trim() !== '' &&
       parseInt(experienceRef.current.value.trim()) >= 0 &&
       description.trim() !== '' &&
-      usernameValidation() &&
-      passwordValidation() &&
-      descriptionValidation()) {
+      isUsernameValid &&
+      isPasswordValid &&
+      isDescriptionValid) {
       console.log(`Registrazione completata con i seguenti dati:
         Nome completo: ${nameRef.current.value}
         Username: ${username}
@@ -53,30 +53,46 @@ function App() {
   const numbers = "0123456789";
   const symbols = "!@#$%^&*()-_=+[]{}|;:'\\\",.<>?/`~";
 
-  const usernameValidation = () => {
+  // const usernameValidation = () => {
 
-    // Regex: ^[a-zA-Z0-9]+$
-    // Le regex in JavaScript si scrivono racchiuse tra slash: /.../
-    // ^     --> Inizio stringa
-    // $     --> Fine stringa
-    // [a-zA-Z0-9] --> Caratteri consentiti: lettere maiuscole, minuscole e numeri
-    // +     --> Dev'esserci almeno uno di questi caratteri (uno o più)
-    // .test(stringa) verifica che la stringa rispetti la regex e restituisce true/false
+  //   // Regex: ^[a-zA-Z0-9]+$
+  //   // Le regex in JavaScript si scrivono racchiuse tra slash: /.../
+  //   // ^     --> Inizio stringa
+  //   // $     --> Fine stringa
+  //   // [a-zA-Z0-9] --> Caratteri consentiti: lettere maiuscole, minuscole e numeri
+  //   // +     --> Dev'esserci almeno uno di questi caratteri (uno o più)
+  //   // .test(stringa) verifica che la stringa rispetti la regex e restituisce true/false
 
+  //   return /^[a-zA-Z0-9]+$/.test(username) && username.length >= 6
+  // }
+
+  const isUsernameValid = useMemo(() => {
     return /^[a-zA-Z0-9]+$/.test(username) && username.length >= 6
-  }
+  }, [username])
 
-  const passwordValidation = () => {
+  // const passwordValidation = () => {
+  //   const hasLetter = [...password].some(c => letters.includes(c));
+  //   const hasNumber = [...password].some(c => numbers.includes(c));
+  //   const hasSymbol = [...password].some(c => symbols.includes(c));
+
+  //   return password.length >= 8 && hasLetter && hasNumber && hasSymbol
+  // }
+
+  const isPasswordValid = useMemo(() => {
     const hasLetter = [...password].some(c => letters.includes(c));
     const hasNumber = [...password].some(c => numbers.includes(c));
     const hasSymbol = [...password].some(c => symbols.includes(c));
 
     return password.length >= 8 && hasLetter && hasNumber && hasSymbol
-  }
+  }, [password])
 
-  const descriptionValidation = () => {
+  // const descriptionValidation = () => {
+  //   return description.trim().length >= 100 && description.trim().length <= 1000
+  // }
+
+  const isDescriptionValid = useMemo(() => {
     return description.trim().length >= 100 && description.trim().length <= 1000
-  }
+  }, [description])
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -91,7 +107,9 @@ function App() {
 
   return (
     <>
-      <form autoComplete="off">
+      <form
+        onSubmit={handleSubmit}
+        autoComplete="off">
         <section>
           <input
             type='text'
@@ -107,8 +125,8 @@ function App() {
             value={username}
             onChange={e => setUsername(e.target.value)}
           />
-          <p style={{ color: usernameValidation() ? 'green' : 'red' }}>
-            {usernameValidation() ? "L'username è valido" : "Devi inserire solo caratteri alfanumerici e almeno 6 caratteri"}
+          <p style={{ color: isUsernameValid ? 'green' : 'red' }}>
+            {isUsernameValid ? "L'username è valido" : "Devi inserire solo caratteri alfanumerici e almeno 6 caratteri"}
           </p>
 
         </section>
@@ -120,8 +138,8 @@ function App() {
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
-          <p style={{ color: passwordValidation() ? 'green' : 'red' }}>
-            {passwordValidation() ? "La password è valida" : "Devi inserire almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo"}
+          <p style={{ color: isPasswordValid ? 'green' : 'red' }}>
+            {isPasswordValid ? "La password è valida" : "Devi inserire almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo"}
           </p>
         </section>
 
@@ -151,13 +169,13 @@ function App() {
             value={description}
             onChange={e => setDescription(e.target.value)}
           />
-          <p style={{ color: descriptionValidation() ? 'green' : 'red' }}>
-            {descriptionValidation() ? "La descrizione è valida" : "Devi inserire tra 100 e 1000 caratteri"}
+          <p style={{ color: isDescriptionValid ? 'green' : 'red' }}>
+            {isDescriptionValid ? "La descrizione è valida" : "Devi inserire tra 100 e 1000 caratteri"}
           </p>
         </section>
 
-        <button onClick={handleSubmit}> Invia </button>
-        <button className='reset' onClick={handleReset}> Reset </button>
+        <button type="submit"> Invia </button>
+        <button type="reset" className='reset' onClick={handleReset}> Reset </button>
       </form>
     </>
   )
