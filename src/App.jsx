@@ -1,38 +1,33 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './App.css'
 
-// 📌 Milestone 2: Validare in tempo reale
+// 📌 Milestone 3: Convertire i Campi Non Controllati
 
-// Aggiungere la validazione in tempo reale dei seguenti campi:
-// ✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
-// ✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
-// ✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
-// Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
-
-// const letters = "abcdefghijklmnopqrstuvwxyz";
-// const numbers = "0123456789";
-// const symbols = "!@#$%^&*()-_=+[]{}|;:'\\",.<>?/`~";
-// Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi.
+// Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
+// Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
+// Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.
+// Assicurati che la validazione continui a funzionare: Anche se un campo non è controllato, deve comunque essere validato correttamente quando l’utente invia il form.
 
 function App() {
-  const [name, setName] = useState('');
+  const nameRef = useRef();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [spec, setSpec] = useState('');
-  const [experience, setExperience] = useState(0);
+  const specRef = useRef();
+  const experienceRef = useRef();
   const [description, setDescription] = useState('');
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (name !== '' && username !== '' && password !== '' && spec !== '' && parseInt(experience) >= 0 && description !== '') {
+    if (nameRef.current.value !== '' && username !== '' && password !== '' && specRef.current.value !== '' &&
+      parseInt(experienceRef.current.value) >= 0 && description !== '' && usernameValidation() && passwordValidation() && descriptionValidation()) {
       console.log(`Registrazione completata con i seguenti dati:
-        Nome completo: ${name}
+        Nome completo: ${nameRef.current.value}
         Username: ${username}
         Password: ${password}
-        Specializzazione: ${spec}
-        Anni di esperienza: ${experience}
+        Specializzazione: ${specRef.current.value}
+        Anni di esperienza: ${experienceRef.current.value}
         Descrizione: ${description}`);
     } else {
       console.log('Devi compilare tutti i campi');
@@ -78,8 +73,7 @@ function App() {
           <input
             type='text'
             placeholder='Nome completo'
-            value={name}
-            onChange={e => setName(e.target.value)}
+            ref={nameRef}
           />
         </section>
 
@@ -110,8 +104,7 @@ function App() {
 
         <section>
           <select
-            value={spec}
-            onChange={e => setSpec(e.target.value)}
+            ref={specRef}
           >
             <option value=''>Seleziona specializzazione</option>
             <option value='Full Stack'>Full Stack</option>
@@ -124,8 +117,7 @@ function App() {
           <input
             type='number'
             placeholder='Anni di esperienza'
-            value={experience}
-            onChange={e => setExperience(e.target.value)}
+            ref={experienceRef}
           />
         </section>
 
