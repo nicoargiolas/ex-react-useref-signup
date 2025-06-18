@@ -52,10 +52,19 @@ button {
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-bottom: 5px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+button.reset {
+  background-color: rgba(255, 0, 0, 0.644);
+}
+
+button.reset:hover {
+  background-color: rgba(255, 0, 0, 0.887);
 }
 
 form p {

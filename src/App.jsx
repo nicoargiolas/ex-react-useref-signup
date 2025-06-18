@@ -1,12 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './App.css'
 
-// 📌 Milestone 3: Convertire i Campi Non Controllati
+// 🎯 Bonus: Migliorare l'Usabilità
 
-// Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
-// Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
-// Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.
-// Assicurati che la validazione continui a funzionare: Anche se un campo non è controllato, deve comunque essere validato correttamente quando l’utente invia il form.
+// Utilizziamo useRef() per migliorare l’esperienza utente, implementando le seguenti funzionalità:
+// Focus automatico al primo input (Nome) al mount del componente.
+// Bottone "Reset" in fondo al form per ripristinare tutti i valori:
+// Gli input controllati devono tornare ai valori iniziali.
+// Gli input non controllati devono essere resettati manualmente usando useRef().
+// Freccia fissa in basso a destra che, quando cliccata, riporta l'utente all'inizio del form (bisogna usare position: fixed).
 
 function App() {
   const nameRef = useRef();
@@ -15,6 +17,10 @@ function App() {
   const specRef = useRef();
   const experienceRef = useRef();
   const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    nameRef.current.focus();
+  }, [])
 
 
   const handleSubmit = (e) => {
@@ -29,8 +35,9 @@ function App() {
         Specializzazione: ${specRef.current.value}
         Anni di esperienza: ${experienceRef.current.value}
         Descrizione: ${description}`);
+      handleReset(e);
     } else {
-      console.log('Devi compilare tutti i campi');
+      console.log('Devi compilare tutti i campi correttamente');
 
     }
   }
@@ -64,11 +71,20 @@ function App() {
     return description.trim().length >= 100 && description.trim().length <= 1000
   }
 
+  const handleReset = (e) => {
+    e.preventDefault();
+
+    setUsername('');
+    setPassword('');
+    setDescription('');
+    nameRef.current.value = '';
+    specRef.current.value = '';
+    experienceRef.current.value = 0;
+  }
+
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        autoComplete="off">
+      <form autoComplete="off">
         <section>
           <input
             type='text'
@@ -118,6 +134,7 @@ function App() {
             type='number'
             placeholder='Anni di esperienza'
             ref={experienceRef}
+            defaultValue={0}
           />
         </section>
 
@@ -132,7 +149,8 @@ function App() {
           </p>
         </section>
 
-        <button> Invia </button>
+        <button onClick={handleSubmit}> Invia </button>
+        <button className='reset' onClick={handleReset}> Reset </button>
       </form>
     </>
   )
