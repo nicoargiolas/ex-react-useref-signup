@@ -26,8 +26,15 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (nameRef.current.value !== '' && username !== '' && password !== '' && specRef.current.value !== '' &&
-      parseInt(experienceRef.current.value) >= 0 && description !== '' && usernameValidation() && passwordValidation() && descriptionValidation()) {
+    if (nameRef.current.value.trim() !== '' &&
+      username.trim() !== '' &&
+      password.trim() !== '' &&
+      specRef.current.value.trim() !== '' &&
+      parseInt(experienceRef.current.value.trim()) >= 0 &&
+      description.trim() !== '' &&
+      usernameValidation() &&
+      passwordValidation() &&
+      descriptionValidation()) {
       console.log(`Registrazione completata con i seguenti dati:
         Nome completo: ${nameRef.current.value}
         Username: ${username}
